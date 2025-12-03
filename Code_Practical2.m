@@ -332,7 +332,7 @@ fprintf('Strain calculation complete.\n');
 %-------------------------------------------------------------------------
 
 % Change this variable to plot different strains: Epsilon_xx, Epsilon_yy, or Gamma_xy
-Strain_Component = Epsilon_xx; % Select component to plot
+Strain_Component = Epsilon_yy; % Select component to plot
 Strain_Name = 'Normal Strain \epsilon_{xx}'; % Title for the plot (change)
 
 num_steps = size(Strain_Component, 3); 
@@ -341,7 +341,7 @@ figure; % Open a new figure window
 % Setup the plot with the first frame
 hPlot = pcolor(X, Y, Strain_Component(:,:,1)); 
 shading interp;             % Interpolates colors for a smooth look
-colormap turbo;               % Jet is standard, try 'parula' or 'turbo' for better contrast
+colormap jet;               % Jet is standard, try 'parula' or 'turbo' for better contrast
 colorbar;                   
 axis equal tight;           % Fit axes to data
 set(gca, 'YDir', 'normal'); % Correct image orientation
