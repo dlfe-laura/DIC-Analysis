@@ -4,13 +4,13 @@
 %-------------------------------------------------------------------------
 
     % Node points. We define a rectangular grid with limits nd step sizes
-    x_min = 61;
-    x_max = 1056;
-    node_step_x = 10; % the step size between analysis node
+    x_min = 150;
+    x_max = 950;
+    node_step_x = 18; % the step size between analysis node
 
-    y_min = 601;
-    y_max = 1203;
-    node_step_y = 10;
+    y_min = 550;
+    y_max = 1200;
+    node_step_y = 18;
     
     % We define the vectors for each direction to define the 2D-matrices
     x_vect = x_min:node_step_x:x_max; % = start:step:end
@@ -29,9 +29,9 @@
     
     % Correlation window size (the specific size of a pattern I am looking for). 
     % The template will slide across my entire analysis window to find matches.
-    corr_half = 12;
-    ref_x= 21 ;
-    ref_y = 21 ;
+    corr_half = 18;
+    %ref_x= 10 ;
+    %ref_y = 10 ;
 %% 
 
 %-------------------------------------------------------------------------
@@ -247,8 +247,8 @@ min_disp = min(D_total(:));
 % 2. Setup the Figure (Initialize with the first frame)
 figure;
 hDispPlot = pcolor(X, Y, D_total(:,:,1)); % Save the plot handle 'hDispPlot'
-shading interp;             % Smooth colors
-colormap jet;               % Rainbow map
+shading interp;             % Smooth colours with interpolation
+colormap turbo;               % Rainbow map
 colorbar;                   % Show scale
 axis equal tight;           % Fit to data
 set(gca, 'YDir', 'normal'); % Correct orientation
@@ -332,7 +332,7 @@ fprintf('Strain calculation complete.\n');
 %-------------------------------------------------------------------------
 
 % Change this variable to plot different strains: Epsilon_xx, Epsilon_yy, or Gamma_xy
-Strain_Component = Epsilon_yy; % Select component to plot
+Strain_Component = Epsilon_xx; % Select component to plot
 Strain_Name = 'Normal Strain \epsilon_{xx}'; % Title for the plot (change)
 
 num_steps = size(Strain_Component, 3); 
@@ -340,7 +340,7 @@ num_steps = size(Strain_Component, 3);
 figure; % Open a new figure window
 % Setup the plot with the first frame
 hPlot = pcolor(X, Y, Strain_Component(:,:,1)); 
-shading interp;             % Interpolates colors for a smooth look
+shading interp;             % Smooth colours with interpolation
 colormap jet;               % Jet is standard, try 'parula' or 'turbo' for better contrast
 colorbar;                   
 axis equal tight;           % Fit axes to data
@@ -377,6 +377,6 @@ for k_plot = 1:num_steps
     drawnow;
     
     % Adjust speed (seconds)
-    pause(0.4); 
+    pause(0.5); 
 end
 fprintf('Animation complete.\n');
