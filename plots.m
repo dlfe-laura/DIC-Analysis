@@ -182,6 +182,86 @@ for k = 1:length(DX_all)
         % Append subsequent frames to the file
         imwrite(imind, cm, gifFilename, 'gif', 'WriteMode', 'append', 'DelayTime', 0.5);
     end
+
+    %%
+
 end
 
 fprintf('Animation successfully saved as %s\n', gifFilename);
+
+%%
+%----------------------------------------------------------------------
+% Strain plots - GIF Generation
+%-----------------------------------------------------------------------
+
+% 1. SETUP OUTPUT FILE
+gif_filename = 'Strain_Animation.gif'; % Name of the file to save
+delay_time = 0.5;                      % Time per frame (seconds)
+
+% Pre-Calculate global limits (Same as your original code)
+get_limits = @(data) [min(data(:)) max(data(:))];
+clim_x  = get_limits(Epsilon_x);
+clim_y  = get_limits(Epsilon_y);
+clim_xy = get_limits(Gamma_xy);
+
+% Safety Check
+if clim_x(1) == clim_x(2),  clim_x(2)  = clim_x(2) + 1e-6; end
+if clim_y(1) == clim_y(2),  clim_y(2)  = clim_y(2) + 1e-6; end
+if clim_xy(1) == clim_xy(2), clim_xy(2) = clim_xy(2) + 1e-6; end
+
+% Create Figure
+hFig = figure('Units', 'normalized', 'Position', [0.1 0.3 0.8 0.4]); 
+set(hFig, 'Name', 'Strain Field Animation', 'Color', 'w'); % Set background to white for cleaner GIF
+
+fprintf('Generating GIF... Please wait.\n');
+
+% 2. ANIMATION LOOP (Run through steps exactly once)
+for k = 1:num_steps
+    
+    % --- Plot 1: Epsilon X ---
+    subplot(1, 3, 1);
+    pcolor(X, Y, Epsilon_x(:,:,k));
+    shading interp; axis equal; axis tight;
+    colormap(gca, jet); 
+    clim(clim_x);      
+    colorbar;
+    title(sprintf('E_{xx} (Normal X)\nFrame: %d', k));
+
+    % --- Plot 2: Epsilon Y ---
+    subplot(1, 3, 2);
+    pcolor(X, Y, Epsilon_y(:,:,k));
+    shading interp; axis equal; axis tight;
+    colormap(gca, jet); 
+    clim(clim_y);      
+    colorbar;
+    title(sprintf('E_{yy} (Normal Y)\nFrame: %d', k));
+
+    % --- Plot 3: Gamma XY ---
+    subplot(1, 3, 3);
+    pcolor(X, Y, Gamma_xy(:,:,k));
+    shading interp; axis equal; axis tight;
+    colormap(gca, jet); 
+    clim(clim_xy);     
+    colorbar;
+    title(sprintf('\\gamma_{xy} (Shear)\nFrame: %d', k));
+    
+    % Force the update so getframe captures the current state
+    drawnow; 
+    
+    % 3. CAPTURE AND WRITE FRAME
+    frame = getframe(hFig); 
+    im = frame2im(frame); 
+    [imind, cm] = rgb2ind(im, 256); 
+    
+    % Write to the GIF file
+    if k == 1 
+        % For the first frame, create the file and set LoopCount to infinity
+        imwrite(imind, cm, gif_filename, 'gif', 'Loopcount', inf, 'DelayTime', delay_time); 
+    else 
+        % For subsequent frames, append to the existing file
+        imwrite(imind, cm, gif_filename, 'gif', 'WriteMode', 'append', 'DelayTime', delay_time); 
+    end 
+end
+
+fprintf('Done! Saved as %s\n', gif_filename);
+
