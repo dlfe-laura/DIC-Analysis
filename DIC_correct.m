@@ -356,8 +356,8 @@ for k= 1:num_steps
     % Normal Strain Y (E_yy = dV/dy)
     Epsilon_y(:,:,k) = dV_dY;
     
-    % Engineering Shear Strain (Gamma_xy = 1/2 * (dU/dy + dV/dx))
-    Gamma_xy(:,:,k) = 1/2 * (dU_dY + dV_dX);
+    % Engineering Shear Strain (Gamma_xy =  (dU/dy + dV/dx))
+    Gamma_xy(:,:,k) = (dU_dY + dV_dX);
 
 end
 
