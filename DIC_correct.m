@@ -98,7 +98,7 @@ DY = zeros(NUM_nodes_y, NUM_nodes_x);
 DX_all = cell(numFiles, 1);
 DY_all = cell(numFiles, 1);
 
-% 3. NEW: Set Frame 1 to zero (since it is the reference)
+%  Set Frame 1 to zero (since it is the reference)
 DX_all{1} = DX; 
 DY_all{1} = DY;
 
