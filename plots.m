@@ -95,3 +95,93 @@ for k = 1:length(DX_all)
 end
 
 fprintf('Animation saved as %s\n', gifFilename);
+
+%%
+
+%-------------------------------------------------
+% Displacement Field Heat map
+%-----------------------------------------------------
+
+%-------------------------------------------------------
+% 1. Pre-calculate Global Max for Color Consistency
+%-------------------------------------------------------
+max_disp = 0;
+for k = 1:length(DX_all)
+    if isempty(DX_all{k}), continue; end
+    
+    curr_mag = sqrt(DX_all{k}.^2 + DY_all{k}.^2); 
+    current_max = max(curr_mag(:)); 
+    
+    if ~isnan(current_max)
+        max_disp = max(max_disp, current_max);
+    end
+end
+
+% Safety check for max_disp
+if max_disp <= 1e-6 
+    fprintf('Warning: Max displacement is ~0. Setting scale to 1.\n');
+    max_disp = 1; 
+end
+
+%-------------------------------------------------------
+% 2. Setup Figure and GIF Parameters
+%-------------------------------------------------------
+gifFilename = 'Displacement_Magnitude.gif';
+
+hFig = figure;
+set(hFig, 'Name', 'Displacement Only');
+% Set a fixed position so the GIF resolution remains constant
+set(hFig, 'Position', [100, 100, 800, 600]); 
+
+firstFrame = true; % Flag to handle the first write operation
+
+%-------------------------------------------------------
+% 3. Animation and Saving Loop
+%-------------------------------------------------------
+% Note: We removed the 'while' loop. We only iterate through the data once to save.
+for k = 1:length(DX_all)
+    
+    % Skip empty frames
+    if isempty(DX_all{k})
+        continue; 
+    end
+    
+    % --- Calculation & Plotting ---
+    Mag = sqrt(DX_all{k}.^2 + DY_all{k}.^2); 
+    
+    pcolor(X, Y, Mag);
+    shading interp;
+    colormap jet;
+    axis equal; axis tight;
+    
+    % Lock color scale bar to global max
+    clim([0 max_disp]); 
+    
+    hBar = colorbar;
+    ylabel(hBar, 'Displacement [px]');
+    title(sprintf('Frame %d | Max Disp: %.4f', k, max(Mag(:))));
+    
+    % Update figure drawing
+    drawnow;
+    
+    % --- GIF Capture Routine ---
+    
+    % 1. Capture the figure content
+    frame = getframe(hFig); 
+    im = frame2im(frame); 
+    
+    % 2. Convert to indexed image (256 colors)
+    [imind, cm] = rgb2ind(im, 256); 
+    
+    % 3. Write to GIF
+    if firstFrame
+        % Create the file. 'Loopcount', inf makes it repeat forever.
+        imwrite(imind, cm, gifFilename, 'gif', 'Loopcount', inf, 'DelayTime', 0.5);
+        firstFrame = false;
+    else
+        % Append subsequent frames to the file
+        imwrite(imind, cm, gifFilename, 'gif', 'WriteMode', 'append', 'DelayTime', 0.5);
+    end
+end
+
+fprintf('Animation successfully saved as %s\n', gifFilename);
