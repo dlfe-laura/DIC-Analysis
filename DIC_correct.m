@@ -222,6 +222,10 @@ while ishandle(hFig) % Runs until the figure window closes
     
     % Loop through all stored time steps
     for k = 1:length(DX_all)
+
+        if isempty(DX_all{k}) % If the frame is empty skip it
+        continue; 
+        end
         
         % Display the background image (for context)
         % We use the deformed image corresponding to this step
