@@ -387,3 +387,42 @@ set(hFig, 'Name', 'Strain Field Animation');
 
 % Animation Loop
 while ishandle(hFig)
+    for k = 1:num_steps
+        
+        % --- Plot 1: Epsilon X ---
+        subplot(1, 3, 1);
+        pcolor(X, Y, Epsilon_x(:,:,k));
+        shading interp; axis equal; axis tight;
+        colormap(gca, jet); % Apply colormap to this subplot
+        clim(clim_x);      % Lock Scale
+        colorbar;
+        title(sprintf('E_{xx} (Normal X)\nFrame: %d', k));
+
+        % --- Plot 2: Epsilon Y ---
+        subplot(1, 3, 2);
+        pcolor(X, Y, Epsilon_y(:,:,k));
+        shading interp; axis equal; axis tight;
+        colormap(gca, jet); 
+        clim(clim_y);      % Lock Scale
+        colorbar;
+        title(sprintf('E_{yy} (Normal Y)\nFrame: %d', k));
+
+        % --- Plot 3: Gamma XY ---
+        subplot(1, 3, 3);
+        pcolor(X, Y, Gamma_xy(:,:,k));
+        shading interp; axis equal; axis tight;
+        colormap(gca, jet); 
+        clim(clim_xy);     % Lock Scale
+        colorbar;
+        title(sprintf('\\gamma_{xy} (Shear)\nFrame: %d', k));
+        
+        % Update all 3 panels at once
+        drawnow;
+        pause(0.5);
+        
+        % Stop if window closed
+        if ~ishandle(hFig), break; end
+    end
+    
+    pause(0.5); % Brief pause before re-looping
+end
