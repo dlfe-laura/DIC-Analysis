@@ -1,2 +1,2 @@
 # DIC-Analysis
-DIC Analysis of Tensile Test
+Digital Analysis Correlation of Tensile Test on a polycarbonate sample.
